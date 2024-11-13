@@ -8,26 +8,35 @@ import Axios from "axios";
 function App() {
   const [notes, setNotes] = useState([]);
 
-  const[data, setData] = useState([]);
 
   const getData = async () =>{
-    const response = await Axios.get("http://localhost:3000");
-    console.log(response.data)
-    setData(response.data);
+    const response = await Axios.get("http://localhost:3000/getData");
+    setNotes(response.data);
   }
 
-  function addNote(newNote) {
-    setNotes(prevNotes => {
-      return [...prevNotes, newNote];
-    });
+  async function addNote(newNote) {
+    const {title, content} = newNote
+    try {
+      const response = await Axios.post("http://localhost:3000/add", {title, content});
+      setNotes(prev => [...prev, response.data]);
+      console.log("Notes added", response.data)
+    } catch (err) {
+      console.log('Error adding notes', err);
+    }
   }
 
-  function deleteNote(id) {
-    setNotes(prevNotes => {
-      return prevNotes.filter((noteItem, index) => {
-        return index !== id;
+  async function deleteNote(id) {
+    const noteId = id
+    try {
+      const response = await Axios.post("http://localhost:3000/delete", {"id": noteId});
+      console.log("Note Deleted", response.data)
+      setNotes(prev => {
+        const updatedNotes = prev.filter((note) => note.id !== id);
+        return updatedNotes
       });
-    });
+    } catch (err) {
+      console.log("Error deleting", err)
+    }
   }
 
   useEffect(() => {
@@ -38,7 +47,7 @@ function App() {
     <div>
       <Header />
       <CreateArea onAdd={addNote} />
-      {data.map((noteItem) => {
+      {notes.map((noteItem) => {
         return (
           <Note
             key={noteItem.id}

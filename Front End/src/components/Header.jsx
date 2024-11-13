@@ -1,10 +1,10 @@
 import React from "react";
-import HighlightIcon from "@mui/icons-material/Highlight";
+import NoteAltIcon from '@mui/icons-material/NoteAlt';
 
 function Header() {
   return (
     <header>
-      <h1><HighlightIcon />Keeper</h1>
+      <h1><NoteAltIcon />Note Keeping</h1>
     </header>
   );
 }
